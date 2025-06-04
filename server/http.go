@@ -22,6 +22,7 @@ type Server struct {
 	serverPrivate
 
 	writer io.Writer
+	port   int
 }
 
 func New(
@@ -30,11 +31,12 @@ func New(
 	shortWriter *memorywriter.MemoryWriter,
 	longWriter *memorywriter.MemoryWriter,
 	version string,
+	httpPort int,
 ) (*Server, error) {
 	longWriter.Log("starting")
 
 	https := &http.Server{
-		Addr: "127.0.0.1:21320",
+		Addr: fmt.Sprintf("127.0.0.1:%d", httpPort),
 	}
 
 	allWriter := io.MultiWriter(stderrWriter, shortWriter, longWriter)
@@ -43,6 +45,7 @@ func New(
 			Server: https,
 		},
 		writer: allWriter,
+		port:   httpPort,
 	}
 
 	r := mux.NewRouter()
@@ -50,13 +53,13 @@ func New(
 	postRouter := r.Methods("POST").Subrouter()
 	redirectRouter := r.Methods("GET").Path("/").Subrouter()
 
-	status.ServeStatus(statusRouter, c, version, shortWriter, longWriter)
+	status.ServeStatus(statusRouter, c, version, shortWriter, longWriter, httpPort)
 	err := api.ServeAPI(postRouter, c, version, longWriter)
 	if err != nil {
 		panic(err) // only error is an error from originValidator regexp constructor
 	}
 
-	status.ServeStatusRedirect(redirectRouter)
+	status.ServeStatusRedirect(redirectRouter, httpPort)
 
 	var h http.Handler = r
 

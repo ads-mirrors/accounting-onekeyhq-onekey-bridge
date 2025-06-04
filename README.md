@@ -10,13 +10,34 @@ All version numbers are controlled by `VERSION` at root level, no need to change
 
 For things work properly , be sure to follow build methods documented in [Build.md](Build.md)
 
-## Emulator support
+## Launch Parameters
+
+### HTTP Server Port Configuration
+
+OneKey bridge runs an HTTP server on port 21320 by default. You can change this port using the `-p` parameter.
+
+**Examples:**
+- `./onekeyd` - Uses default port 21320
+- `./onekeyd -p 21325` - Uses port 21325
+- `./onekeyd -p 20321` - Uses port 20321
+
+This is useful when:
+- Running multiple bridge instances simultaneously
+- Port 21320 is already in use by another application
+- You need to use a specific port for network configuration
+
+### Emulator Support
 
 OneKey bridge has emulator support, but it's disabled by default.
 
-To enable emulator support, launch with `-e` parameter followed by port, for example `./onekeyd -e 21324`
+To enable emulator support, launch with `-e` parameter followed by port, for example `./onekeyd -e 54935`
 
 To disable all USB in order to run on some virtual environments,launch with `-u=false` parameter, for example `./onekeyd -u=false`
+
+**Combined Examples:**
+- `./onekeyd -p 21325 -e 54935` - HTTP server on port 21325, emulator on port 54935
+- `./onekeyd -p 20321 -u=false` - HTTP server on port 20321, USB disabled
+- `./onekeyd -p 20321 -e 54935 -u=false` - HTTP server on port 20321,emulator on port 54935, USB disabled
 
 If you want change default launch options,  you may have to change service accordingly
 
@@ -30,7 +51,7 @@ On Windows, open `shell:startup` folder, then edit the `OneKey Bridge.lnk` file
 
 ## API documentation
 
-`onekey-bridge` starts a HTTP server on `http://localhost:21320`. AJAX calls are only enabled from onekey.so subdomains.
+`onekey-bridge` starts a HTTP server on `http://localhost:21320` by default. The port can be configured using the `-p` parameter (see Launch Parameters section above). AJAX calls are only enabled from onekey.so subdomains.
 
 Server supports following API calls:
 
@@ -51,9 +72,9 @@ OneKey Bridge has support for debug link.
 
 To support an emulator with debug link, run
 
-`./onekeyd -ed 21324:21320 -u=false`
+`./onekeyd -ed 54935:21320 -u=false`
 
-this will detect emulator debug link on port 21320, with regular device on 21324.
+this will detect emulator debug link on port 21320, with regular device on 54935.
 
 To support WebUSB devices with debug link, no option is needed, just run onekey-bridge.
 

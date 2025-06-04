@@ -102,6 +102,7 @@ func main() {
 	var verbose bool
 	var reset bool
 	var versionFlag bool
+	var httpPort int
 
 	flag.StringVar(&logfile, "l", "", "Log into a file, rotating after 20MB")
 	flag.Var(&ports, "e", "Use UDP port for emulator. Can be repeated for more ports. Example: onekey-go -e 21324 -e 21326")
@@ -110,6 +111,7 @@ func main() {
 	flag.BoolVar(&verbose, "v", false, "Write verbose logs to either stderr or logfile")
 	flag.BoolVar(&versionFlag, "version", false, "Write version")
 	flag.BoolVar(&reset, "r", true, "Reset USB device on session acquiring. Enabled by default (to prevent wrong device states); set to false if you plan to connect to debug link outside of bridge.")
+	flag.IntVar(&httpPort, "p", 21320, "HTTP server port. Default is 21320. Example: onekey-go -p 21325")
 	flag.Parse()
 
 	if versionFlag {
@@ -168,7 +170,7 @@ func main() {
 	longMemoryWriter.Log("Creating core")
 	c := core.New(b, longMemoryWriter, allowCancel(), reset)
 	longMemoryWriter.Log("Creating HTTP server")
-	s, err := server.New(c, stderrWriter, shortMemoryWriter, longMemoryWriter, version)
+	s, err := server.New(c, stderrWriter, shortMemoryWriter, longMemoryWriter, version, httpPort)
 
 	if err != nil {
 		stderrLogger.Fatalf("https: %s", err)

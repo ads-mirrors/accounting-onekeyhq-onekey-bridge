@@ -1,6 +1,7 @@
 package status
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/OneKeyHQ/onekey-bridge/core"
@@ -17,27 +18,31 @@ type status struct {
 	core                                *core.Core
 	version                             string
 	shortMemoryWriter, longMemoryWriter *memorywriter.MemoryWriter
+	port                                int
 }
 
 const csrfkey = "slk0118h51w2qiw4fhrfyd84f59j81ln"
 
-func ServeStatusRedirect(r *mux.Router) {
-	r.HandleFunc("/", redirect)
+func ServeStatusRedirect(r *mux.Router, httpPort int) {
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		redirect(w, r, httpPort)
+	})
 	r.Use(OriginCheck(map[string]string{
 		"": "",
 	}))
 }
 
-func redirect(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "http://127.0.0.1:21320/status/", http.StatusMovedPermanently)
+func redirect(w http.ResponseWriter, r *http.Request, httpPort int) {
+	http.Redirect(w, r, fmt.Sprintf("http://127.0.0.1:%d/status/", httpPort), http.StatusMovedPermanently)
 }
 
-func ServeStatus(r *mux.Router, c *core.Core, v string, mw, dmw *memorywriter.MemoryWriter) {
+func ServeStatus(r *mux.Router, c *core.Core, v string, mw, dmw *memorywriter.MemoryWriter, httpPort int) {
 	status := &status{
 		core:              c,
 		version:           v,
 		shortMemoryWriter: mw,
 		longMemoryWriter:  dmw,
+		port:              httpPort,
 	}
 	r.Methods("GET").Path("/").HandlerFunc(status.statusPage)
 	r.Methods("POST").Path("/log.gz").HandlerFunc(status.statusGzip)
@@ -45,7 +50,7 @@ func ServeStatus(r *mux.Router, c *core.Core, v string, mw, dmw *memorywriter.Me
 	r.Use(csrf.Protect([]byte(csrfkey), csrf.Secure(false)))
 	r.Use(OriginCheck(map[string]string{
 		"/status/":       "",
-		"/status/log.gz": "http://127.0.0.1:21320",
+		"/status/log.gz": fmt.Sprintf("http://127.0.0.1:%d", httpPort),
 	}))
 }
 
