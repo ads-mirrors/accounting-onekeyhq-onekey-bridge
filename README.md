@@ -19,7 +19,7 @@ OneKey bridge runs an HTTP server on port 21320 by default. You can change this 
 **Examples:**
 - `./onekeyd` - Uses default port 21320
 - `./onekeyd -p 21325` - Uses port 21325
-- `./onekeyd -p 20321` - Uses port 20321
+- `./onekeyd -p 21321` - Uses port 21321
 
 This is useful when:
 - Running multiple bridge instances simultaneously
@@ -36,8 +36,8 @@ To disable all USB in order to run on some virtual environments,launch with `-u=
 
 **Combined Examples:**
 - `./onekeyd -p 21325 -e 54935` - HTTP server on port 21325, emulator on port 54935
-- `./onekeyd -p 20321 -u=false` - HTTP server on port 20321, USB disabled
-- `./onekeyd -p 20321 -e 54935 -u=false` - HTTP server on port 20321,emulator on port 54935, USB disabled
+- `./onekeyd -p 21321 -u=false` - HTTP server on port 21321, USB disabled
+- `./onekeyd -p 21321 -e 54935 -u=false` - HTTP server on port 21321,emulator on port 54935, USB disabled
 
 If you want change default launch options,  you may have to change service accordingly
 
