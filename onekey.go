@@ -111,7 +111,7 @@ func main() {
 	flag.BoolVar(&verbose, "v", false, "Write verbose logs to either stderr or logfile")
 	flag.BoolVar(&versionFlag, "version", false, "Write version")
 	flag.BoolVar(&reset, "r", true, "Reset USB device on session acquiring. Enabled by default (to prevent wrong device states); set to false if you plan to connect to debug link outside of bridge.")
-	flag.IntVar(&httpPort, "p", 21320, "HTTP server port. Default is 21320. Example: onekey-go -p 21325")
+	flag.IntVar(&httpPort, "p", 21321, "HTTP server port. Emulator default is 21321. Example: onekey-go -p 21325")
 	flag.Parse()
 
 	if versionFlag {
